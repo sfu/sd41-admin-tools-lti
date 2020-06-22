@@ -14,13 +14,15 @@
     "prettier": "^2.0.5"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
     "csv": "^5.3.2",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
     "ims-lti": "git+https://github.com/sfu/ims-lti.git#1cfa6c9",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon --inspect=0.0.0.0:9229 index.js"
   }
 }
