@@ -1,9 +1,23 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const compression = require('compression');
 const { Provider } = require('ims-lti');
 const { promisify } = require('util');
 
+const Bundler = require('parcel-bundler');
+const path = require('path');
+const entry = path.resolve('./app/index.html');
+const bundle = new Bundler(entry, {
+  hmr: true,
+  hmrPort: 8000,
+  https: {
+    cert: './.certs/sd41lti.lcs-dev.its.sfu.ca/cert.pem',
+    key: './.certs/sd41lti.lcs-dev.its.sfu.ca/key.pem',
+  },
+});
+
+// TODO: use redis for sessions
 const sessionConfig = {
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -15,11 +29,7 @@ const app = express();
 app.use(session(sessionConfig));
 app.set('trust proxy', true);
 app.use(bodyParser.urlencoded({ extended: false }));
-
-app.get('/', (req, res) => {
-  res.send(`<pre>${JSON.stringify(req.session, null, 2)}</pre>`);
-  console.log(req.session);
-});
+app.use(compression());
 
 app.post('/', async (req, res) => {
   const {
@@ -57,4 +67,11 @@ app.post('/', async (req, res) => {
   res.redirect('/');
 });
 
-app.listen(3000);
+app.use(bundle.middleware());
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('./dist/index.html'));
+});
+
+app.listen(3000, () => {
+  console.log('ready');
+});
