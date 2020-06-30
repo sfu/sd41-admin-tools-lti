@@ -20,7 +20,7 @@ const UploadForm = ({ send, setUploadedData, setErrorMessage }) => (
             parsed[0].hasOwnProperty(reqField)
           )
         ) {
-          send('error');
+          send('ERROR');
           return;
         }
 
@@ -32,29 +32,31 @@ const UploadForm = ({ send, setUploadedData, setErrorMessage }) => (
               } is missing a value for one or more required fields. Please check your file and try again.`
             );
             console.log(record);
-            send('error');
+            send('ERROR');
           }
         });
 
         setUploadedData(parsed);
-        send('verified');
+        send('VERIFIED');
       } catch (error) {
         setErrorMessage(error.message);
-        send('error');
+        send('ERROR');
       }
     }}
     onDropRejected={([file]) => {
       setErrorMessage(`File rejected ${file.name}`);
-      send('error');
+      send('ERROR');
     }}
-    renderLabel={
-      <View as="div" padding="xx-large large" background="primary">
-        <IconUploadLine size="large" />
-        <Heading>Drop your users CSV file here to upload</Heading>
-        <Text color="brand">
-          Drag and drop, or click to browse your computer
-        </Text>
-      </View>
+    renderLabel={({ isDragAccepted, isDragRejected }) =>
+      console.log({ isDragAccepted, isDragRejected }) || (
+        <View as="div" padding="xx-large large" background="primary">
+          <IconUploadLine size="large" />
+          <Heading>Drop your users CSV file here to upload</Heading>
+          <Text color="brand">
+            Drag and drop, or click to browse your computer
+          </Text>
+        </View>
+      )
     }
   />
 );

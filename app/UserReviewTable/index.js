@@ -36,7 +36,7 @@ const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
         onClick={() => {
           setUploadedData(null);
           setErrorMessage(null);
-          send('reset');
+          send('RESET');
         }}
       >
         Reset
@@ -46,7 +46,7 @@ const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
         onClick={() => {
           setUploadedData(null);
           setErrorMessage(null);
-          send('upload');
+          send('UPLOAD');
         }}
       >
         Upload

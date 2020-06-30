@@ -13,7 +13,7 @@ const App = () => {
   let view;
   console.log(current.value);
   switch (current.value) {
-    case 'READY':
+    case 'ready':
       view = (
         <UploadForm
           send={send}
@@ -24,7 +24,7 @@ const App = () => {
 
       break;
 
-    case 'REVIEWING':
+    case 'reviewing':
       view = (
         <UserReviewTable
           setUploadedData={setUploadedData}
@@ -35,25 +35,25 @@ const App = () => {
       );
       break;
 
-    case 'UPLOADING':
+    case 'uploading':
       view = <p>Sending data to Canvas</p>;
       window.setTimeout(() => {
-        send('uploaded');
+        send('UPLOADED');
       }, 5000);
       break;
 
-    case 'WAITING':
+    case 'waiting':
       view = <p>Waiting for Canvas to process data</p>;
       window.setTimeout(() => {
-        send('completed');
+        send('COMPLETED');
       }, 5000);
       break;
 
-    case 'COMPLETE':
+    case 'complete':
       view = <p>All done</p>;
       break;
 
-    case 'ERROR':
+    case 'error':
       view = <p>Error: {errorMessage}</p>;
       break;
 

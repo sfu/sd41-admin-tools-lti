@@ -1,30 +1,30 @@
 import { Machine } from 'xstate';
 
 export default Machine({
-  initial: 'READY',
+  initial: 'ready',
   states: {
-    READY: {
-      on: { verified: 'REVIEWING', error: 'ERROR' },
+    ready: {
+      on: { VERIFIED: 'reviewing', ERROR: 'error' },
     },
-    REVIEWING: {
-      on: { upload: 'UPLOADING' },
+    reviewing: {
+      on: { UPLOAD: 'uploading' },
     },
-    UPLOADING: {
-      on: { uploaded: 'WAITING' },
+    uploading: {
+      on: { UPLOADED: 'waiting', ERROR: 'error' },
     },
-    WAITING: {
+    waiting: {
       on: {
-        in_progress: 'WAITING',
-        completed: 'COMPLETE',
-        error: 'ERROR',
+        IN_PROGRESS: 'waiting',
+        COMPLETED: 'complete',
+        ERROR: 'error',
       },
     },
-    COMPLETE: {
+    complete: {
       type: 'final',
     },
-    ERROR: {
+    error: {
       on: {
-        reset: 'READY',
+        RESET: 'ready',
       },
     },
   },
