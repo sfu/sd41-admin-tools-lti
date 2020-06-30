@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Heading, Table } from '@instructure/ui';
 
-const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
+const UserReviewTable = ({ send, state }) => {
+  const data = state.context.userSubmittedData;
+
   // generate the header row
   const tableHeaderCols = Object.keys(data[0]).map((field) => (
     <Table.ColHeader key={field} id={field}>
@@ -34,8 +36,8 @@ const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
       </Table>
       <Button
         onClick={() => {
-          setUploadedData(null);
-          setErrorMessage(null);
+          state.context.userSubmittedData = null;
+          state.context.error = null;
           send('RESET');
         }}
       >
@@ -44,8 +46,8 @@ const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
       <Button
         color="primary"
         onClick={() => {
-          setUploadedData(null);
-          setErrorMessage(null);
+          state.context.userSubmittedData = null;
+          state.context.error = null;
           send('UPLOAD');
         }}
       >
@@ -56,9 +58,7 @@ const UserReviewTable = ({ data, setUploadedData, setErrorMessage, send }) => {
 };
 
 UserReviewTable.propTypes = {
-  data: PropTypes.array.isRequired,
-  setUploadedData: PropTypes.func.isRequired,
-  setErrorMessage: PropTypes.func.isRequired,
+  state: PropTypes.object.isRequired,
   send: PropTypes.func.isRequired,
 };
 

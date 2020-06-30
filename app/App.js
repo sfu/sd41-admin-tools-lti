@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useMachine } from '@xstate/react';
 import '@instructure/canvas-theme';
 import { Heading, View } from '@instructure/ui';
@@ -7,32 +7,17 @@ import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
 
 const App = () => {
-  const [current, send] = useMachine(stateMachine, { devTools: true });
-  const [uploadedData, setUploadedData] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [state, send] = useMachine(stateMachine, { devTools: true });
   let view;
-  console.log(current.value);
-  switch (current.value) {
+  console.log(state.value);
+  switch (state.value) {
     case 'ready':
-      view = (
-        <UploadForm
-          send={send}
-          setUploadedData={setUploadedData}
-          setErrorMessage={setErrorMessage}
-        />
-      );
+      view = <UploadForm state={state} send={send} />;
 
       break;
 
     case 'reviewing':
-      view = (
-        <UserReviewTable
-          setUploadedData={setUploadedData}
-          setErrorMessage={setErrorMessage}
-          send={send}
-          data={uploadedData}
-        />
-      );
+      view = <UserReviewTable state={state} send={send} />;
       break;
 
     case 'uploading':
@@ -54,13 +39,13 @@ const App = () => {
       break;
 
     case 'error':
-      view = <p>Error: {errorMessage}</p>;
+      view = <p>Error: {state.context.error}</p>;
       break;
 
     default:
       view = (
         <p>
-          TODO: implement handler for <code>{current.value}</code>
+          TODO: implement handler for <code>{state.value}</code>
         </p>
       );
   }

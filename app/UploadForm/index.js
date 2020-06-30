@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FileDrop, Heading, IconUploadLine, Text, View } from '@instructure/ui';
 import csvParse from 'csv-parse/lib/sync';
 
-const UploadForm = ({ send, setUploadedData, setErrorMessage }) => (
+const UploadForm = ({ state, send }) => (
   <FileDrop
     accept="text/csv"
     onDropAccepted={async ([file]) => {
@@ -26,25 +26,23 @@ const UploadForm = ({ send, setUploadedData, setErrorMessage }) => (
 
         parsed.forEach((record, i) => {
           if (!REQUIRED_FIELDS.every((reqField) => !!record[reqField])) {
-            setErrorMessage(
-              `Line ${
-                i + 2
-              } is missing a value for one or more required fields. Please check your file and try again.`
-            );
+            state.context.error = `Line ${
+              i + 2
+            } is missing a value for one or more required fields. Please check your file and try again.`;
             console.log(record);
             send('ERROR');
           }
         });
 
-        setUploadedData(parsed);
+        state.context.userSubmittedData = parsed;
         send('VERIFIED');
       } catch (error) {
-        setErrorMessage(error.message);
+        state.context.error = error.message;
         send('ERROR');
       }
     }}
     onDropRejected={([file]) => {
-      setErrorMessage(`File rejected ${file.name}`);
+      state.context.error = `File rejected ${file.name}`;
       send('ERROR');
     }}
     renderLabel={({ isDragAccepted, isDragRejected }) =>
@@ -62,9 +60,8 @@ const UploadForm = ({ send, setUploadedData, setErrorMessage }) => (
 );
 
 UploadForm.propTypes = {
+  state: PropTypes.object.isRequired,
   send: PropTypes.func.isRequired,
-  setUploadedData: PropTypes.func.isRequired,
-  setErrorMessage: PropTypes.func.isRequired,
 };
 
 export default UploadForm;

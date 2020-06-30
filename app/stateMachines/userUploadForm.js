@@ -1,7 +1,12 @@
 import { Machine } from 'xstate';
 
 export default Machine({
+  id: 'USER_UPLOAD_FORM',
   initial: 'ready',
+  context: {
+    error: null,
+    userSubmittedData: null,
+  },
   states: {
     ready: {
       on: { VERIFIED: 'reviewing', ERROR: 'error' },
