@@ -45,8 +45,7 @@ const UploadForm = ({ state, send }) => (
       state.context.error = `File rejected ${file.name}`;
       send('ERROR');
     }}
-    renderLabel={({ isDragAccepted, isDragRejected }) =>
-      console.log({ isDragAccepted, isDragRejected }) || (
+    renderLabel={({ isDragAccepted, isDragRejected }) => (
         <View as="div" padding="xx-large large" background="primary">
           <IconUploadLine size="large" />
           <Heading>Drop your users CSV file here to upload</Heading>
