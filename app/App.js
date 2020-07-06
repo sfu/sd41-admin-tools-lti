@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMachine } from '@xstate/react';
 import '@instructure/canvas-theme';
-import { Heading, View } from '@instructure/ui';
+import { Button, Heading, View } from '@instructure/ui';
 import stateMachine from './stateMachines/userUploadForm';
 import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
@@ -9,7 +9,6 @@ import UserReviewTable from './UserReviewTable';
 const App = () => {
   const [state, send] = useMachine(stateMachine, { devTools: true });
   let view;
-  console.log(state.value);
   switch (state.value) {
     case 'ready':
       view = <UploadForm state={state} send={send} />;
@@ -39,7 +38,20 @@ const App = () => {
       break;
 
     case 'error':
-      view = <p>Error: {state.context.error}</p>;
+      view = (
+        <>
+          <p>Error: {state.context.error}</p>
+          <Button
+            onClick={() => {
+              state.context.userSubmittedData = null;
+              state.context.error = null;
+              send('RESET');
+            }}
+          >
+            Reset
+          </Button>
+        </>
+      );
       break;
 
     default:

@@ -20,41 +20,40 @@ const UploadForm = ({ state, send }) => (
             parsed[0].hasOwnProperty(reqField)
           )
         ) {
-          send('ERROR');
+          send('ERROR', {
+            error:
+              'File is missing one or more required fields. `login_id` and `user_id` are both required. Please check your file and try again.',
+          });
           return;
         }
 
         parsed.forEach((record, i) => {
           if (!REQUIRED_FIELDS.every((reqField) => !!record[reqField])) {
-            state.context.error = `Line ${
-              i + 2
-            } is missing a value for one or more required fields. Please check your file and try again.`;
-            console.log(record);
-            send('ERROR');
+            send('ERROR', {
+              error: `Line ${
+                i + 2
+              } is missing a value for one or more required fields. Please check your file and try again.`,
+            });
           }
         });
 
-        state.context.userSubmittedData = parsed;
-        send('VERIFIED');
+        send('VERIFIED', { userSubmittedData: parsed });
       } catch (error) {
-        state.context.error = error.message;
-        send('ERROR');
+        send('ERROR', { error: error.message });
       }
     }}
     onDropRejected={([file]) => {
-      state.context.error = `File rejected ${file.name}`;
-      send('ERROR');
+      send('ERROR', { error: `File rejected ${file.name}` });
     }}
     renderLabel={({ isDragAccepted, isDragRejected }) => (
-        <View as="div" padding="xx-large large" background="primary">
-          <IconUploadLine size="large" />
-          <Heading>Drop your users CSV file here to upload</Heading>
-          <Text color="brand">
-            Drag and drop, or click to browse your computer
-          </Text>
-        </View>
-      )
-    }
+      <View as="div" padding="xx-large large" background="primary">
+        <IconUploadLine size="large" />
+        <Heading>Drop your users CSV file here to upload</Heading>
+        <Text color="brand">
+          Drag and drop, or click to browse your computer
+        </Text>
+      </View>
+    )}
   />
 );
 
