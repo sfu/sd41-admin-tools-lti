@@ -5,6 +5,24 @@ const initialContext = {
   userSubmittedData: null,
 };
 
+// TODO: Move this to its own file
+const postUserSisData = (context, event) => {
+  // get some data off of context
+  const { userSubmittedData } = context;
+
+  // return a promise
+  return fetch(`/userSisImport`, {
+    method: 'post',
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userSubmittedData),
+  }).then((response) => response.json());
+};
+
 export default Machine(
   {
     id: 'USER_UPLOAD_FORM',
@@ -35,6 +53,10 @@ export default Machine(
         },
       },
       uploading: {
+        invoke: {
+          id: 'invoke-postUserSisData',
+          src: postUserSisData,
+        },
         on: { UPLOADED: 'waiting', ERROR: 'error' },
       },
       waiting: {
@@ -45,7 +67,9 @@ export default Machine(
         },
       },
       complete: {
-        type: 'final',
+        on: {
+          RESET: 'ready',
+        },
       },
       error: {
         on: {
