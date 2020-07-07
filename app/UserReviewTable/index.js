@@ -36,8 +36,6 @@ const UserReviewTable = ({ send, state }) => {
       </Table>
       <Button
         onClick={() => {
-          state.context.userSubmittedData = null;
-          state.context.error = null;
           send('RESET');
         }}
       >
@@ -46,8 +44,6 @@ const UserReviewTable = ({ send, state }) => {
       <Button
         color="primary"
         onClick={() => {
-          state.context.userSubmittedData = null;
-          state.context.error = null;
           send('UPLOAD');
         }}
       >
