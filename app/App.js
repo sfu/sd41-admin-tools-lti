@@ -34,7 +34,18 @@ const App = () => {
       break;
 
     case 'complete':
-      view = <p>All done</p>;
+      view = (
+        <>
+          <p>All done</p>{' '}
+          <Button
+            onClick={() => {
+              send('RESET');
+            }}
+          >
+            Reset
+          </Button>
+        </>
+      );
       break;
 
     case 'error':
@@ -43,8 +54,6 @@ const App = () => {
           <p>Error: {state.context.error}</p>
           <Button
             onClick={() => {
-              state.context.userSubmittedData = null;
-              state.context.error = null;
               send('RESET');
             }}
           >
