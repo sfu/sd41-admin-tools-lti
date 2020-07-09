@@ -21,16 +21,10 @@ const App = () => {
 
     case 'uploading':
       view = <p>Sending data to Canvas</p>;
-      window.setTimeout(() => {
-        send('UPLOADED');
-      }, 5000);
       break;
 
     case 'waiting':
       view = <p>Waiting for Canvas to process data</p>;
-      window.setTimeout(() => {
-        send('COMPLETED');
-      }, 5000);
       break;
 
     case 'complete':
