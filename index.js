@@ -9,6 +9,9 @@ const { Provider } = require('ims-lti');
 const Bundler = require('parcel-bundler');
 const stringifyCsv = require('csv-stringify/lib/sync');
 const axios = require('axios');
+const Ajv = require('ajv');
+const sisUserSchema = require('./sisUserSchema.json');
+
 const entry = path.resolve('./app/index.html');
 const bundle = new Bundler(entry, {
   hmr: true,
@@ -75,20 +78,14 @@ app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
 app.post('/userSisImport', jsonParser, async (req, res) => {
   try {
     const { body } = req;
-    // perform same checks as client-side
-    // TODO: constrain email addresses to @edu.burnabyschools.ca
-    const REQUIRED_FIELDS = ['login_id', 'user_id'];
-    const reqFieldValueErrors = [];
-    body.forEach((record, i) => {
-      if (!REQUIRED_FIELDS.every((reqField) => !!record[reqField])) {
-        reqFieldValueErrors.push(
-          `Record ${i} is missing a value for one or more required fields. \`login_id\` and \`user_id\` are both required.`
-        );
-      }
-    });
+    // validate the incoming data against the schema
+    const ajv = new Ajv({ verbose: true });
+    const validate = ajv.compile(sisUserSchema);
 
-    if (reqFieldValueErrors.length > 0) {
-      res.send(400, { errors: reqFieldValueErrors, dataReceived: body });
+    const valid = validate(body);
+
+    if (!valid) {
+      res.send(400, { errors: validate.errors, dataReceived: body });
       return;
     }
 

@@ -2,12 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FileDrop, Heading, IconUploadLine, Text, View } from '@instructure/ui';
 import csvParse from 'csv-parse/lib/sync';
+import Ajv from 'ajv';
+import schema from '../../sisUserSchema.json';
 
 const UploadForm = ({ state, send }) => (
   <FileDrop
     accept="text/csv"
     onDropAccepted={async ([file]) => {
-      const REQUIRED_FIELDS = ['login_id', 'user_id'];
+      const ajv = new Ajv({ verbose: true });
+      const validate = ajv.compile(schema);
+
       const content = await file.text();
       try {
         const parsed = csvParse(content, {
@@ -15,29 +19,16 @@ const UploadForm = ({ state, send }) => (
           skip_lines_with_empty_values: true,
         });
 
-        if (
-          !REQUIRED_FIELDS.every((reqField) =>
-            parsed[0].hasOwnProperty(reqField)
-          )
-        ) {
+        const valid = validate(parsed);
+
+        if (valid) {
+          send('VERIFIED', { userSubmittedData: parsed });
+        } else {
           send('ERROR', {
             error:
-              'File is missing one or more required fields. `login_id` and `user_id` are both required. Please check your file and try again.',
+              'The data contained in the CSV file is invalid. Please check your file and try again.',
           });
-          return;
         }
-
-        parsed.forEach((record, i) => {
-          if (!REQUIRED_FIELDS.every((reqField) => !!record[reqField])) {
-            send('ERROR', {
-              error: `Line ${
-                i + 2
-              } is missing a value for one or more required fields. Please check your file and try again.`,
-            });
-          }
-        });
-
-        send('VERIFIED', { userSubmittedData: parsed });
       } catch (error) {
         send('ERROR', { error: error.message });
       }

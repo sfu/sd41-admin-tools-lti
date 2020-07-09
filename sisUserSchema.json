@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://sd41admintools.its.sfu.ca/sisUserSchema.json",
+  "title": "SIS User Import",
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/user"
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "required": ["user_id", "login_id"],
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The student's SIS ID",
+          "pattern": "^\\d+$"
+        },
+        "login_id": {
+          "type": "string",
+          "description": "The student's login ID. It must be their SD41 email address",
+          "pattern": "^[0-9]+@edu\\.burnabyschools\\.ca$"
+        },
+        "first_name": {
+          "type": "string",
+          "description": "The student's first name"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "The student's last name"
+        },
+        "email": {
+          "type": "string",
+          "description": "The student's email address. It must be their SD41 email address",
+          "pattern": "^[0-9]+@edu\\.burnabyschools\\.ca$"
+        },
+        "status": {
+          "type": "string",
+          "description": "The student's enrollment status. One of ['active', 'deleted].",
+          "enum": ["active", "deleted"],
+          "default": "active"
+        }
+      }
+    }
+  }
+}
