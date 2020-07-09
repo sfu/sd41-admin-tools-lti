@@ -1,26 +1,12 @@
 import { Machine, assign } from 'xstate';
+import postUserSisData from '../lib/postUserSisData';
+import checkSisImportProgress from '../lib/checkSisImportProgress';
 
 const initialContext = {
   error: null,
   userSubmittedData: null,
-};
-
-// TODO: Move this to its own file
-const postUserSisData = (context, event) => {
-  // get some data off of context
-  const { userSubmittedData } = context;
-
-  // return a promise
-  return fetch(`/userSisImport`, {
-    method: 'post',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userSubmittedData),
-  }).then((response) => response.json());
+  sisImportObject: null,
+  sisImportStatusObject: null,
 };
 
 export default Machine(
@@ -56,15 +42,50 @@ export default Machine(
         invoke: {
           id: 'invoke-postUserSisData',
           src: postUserSisData,
+          onDone: {
+            target: 'polling',
+            actions: assign({ sisImportObject: (_, event) => event.data }),
+          },
+          onError: 'error',
         },
-        on: { UPLOADED: 'waiting', ERROR: 'error' },
+        on: { ERROR: 'error' },
+      },
+      polling: {
+        invoke: {
+          id: 'invoke-checkSisImportProgress',
+          src: checkSisImportProgress,
+          onDone: [
+            {
+              target: 'complete',
+              cond: (_, event) => {
+                const SUCCESS_STATES = [
+                  'imported',
+                  'imported_with_messages',
+                  'restored',
+                ];
+                const { workflow_state } = event.data;
+                console.log({ workflow_state });
+                console.log(event.data);
+                return SUCCESS_STATES.includes(workflow_state);
+              },
+              actions: assign({
+                sisImportStatusObject: (_, event) => event.data,
+              }),
+            },
+            {
+              target: 'error',
+              cond: (_, event) => {
+                const ERROR_STATES = ['failed_with_messages', 'failed'];
+                return ERROR_STATES.includes(event.data.workflow_state);
+              },
+            },
+            { target: 'waiting' },
+          ],
+          onError: 'error',
+        },
       },
       waiting: {
-        on: {
-          IN_PROGRESS: 'waiting',
-          COMPLETED: 'complete',
-          ERROR: 'error',
-        },
+        after: { 1000: 'polling' },
       },
       complete: {
         on: {
