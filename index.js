@@ -147,7 +147,6 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
 // TODO: check for session
 app.get('/sisImportStatus/:id', async (req, res) => {
   const { id } = req.params;
-  console.log({ id });
   const {
     CANVAS_HOST,
     CANVAS_TOKEN,
