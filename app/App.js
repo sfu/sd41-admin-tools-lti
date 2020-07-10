@@ -5,6 +5,7 @@ import { Button, Heading, View } from '@instructure/ui';
 import stateMachine from './stateMachines/userUploadForm';
 import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
+import CSVParseError from './CSVParseError';
 
 const App = () => {
   const [state, send] = useMachine(stateMachine, { devTools: true });
@@ -27,18 +28,9 @@ const App = () => {
       view = <p>Waiting for Canvas to process data</p>;
       break;
 
-    case 'complete':
+    case 'csvParseError':
       view = (
-        <>
-          <p>All done</p>{' '}
-          <Button
-            onClick={() => {
-              send('RESET');
-            }}
-          >
-            Reset
-          </Button>
-        </>
+        <CSVParseError send={send} errorData={state.context.csvParseError} />
       );
       break;
 

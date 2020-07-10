@@ -9,28 +9,28 @@ const UploadForm = ({ state, send }) => (
   <FileDrop
     accept="text/csv"
     onDropAccepted={async ([file]) => {
-      const ajv = new Ajv({ verbose: true });
+      const ajv = new Ajv({ verbose: false, allErrors: true, messages: true });
       const validate = ajv.compile(schema);
 
       const content = await file.text();
+      let parsed;
       try {
-        const parsed = csvParse(content, {
+        parsed = csvParse(content, {
           columns: true,
           skip_lines_with_empty_values: true,
         });
-
-        const valid = validate(parsed);
-
-        if (valid) {
-          send('VERIFIED', { userSubmittedData: parsed });
-        } else {
-          send('ERROR', {
-            error:
-              'The data contained in the CSV file is invalid. Please check your file and try again.',
-          });
-        }
       } catch (error) {
-        send('ERROR', { error: error.message });
+        send('CSV_PARSE_ERROR', { csvParseError: error.message });
+      }
+
+      const valid = validate(parsed);
+
+      if (valid) {
+        send('VERIFIED', { userSubmittedData: parsed });
+      } else {
+        send('VALIDATION_ERROR', {
+          validationError: validate.errors,
+        });
       }
     }}
     onDropRejected={([file]) => {
