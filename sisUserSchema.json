@@ -9,7 +9,14 @@
   "definitions": {
     "user": {
       "type": "object",
-      "required": ["user_id", "login_id"],
+      "required": [
+        "user_id",
+        "login_id",
+        "first_name",
+        "last_name",
+        "email",
+        "status"
+      ],
       "properties": {
         "user_id": {
           "type": "string",
