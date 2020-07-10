@@ -5,6 +5,7 @@ import { Button, Heading, View } from '@instructure/ui';
 import stateMachine from './stateMachines/userUploadForm';
 import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
+import ValidationError from './ValidationError';
 import CSVParseError from './CSVParseError';
 import UploadSuccess from './UploadSuccess';
 
@@ -31,8 +32,13 @@ const App = () => {
       );
       break;
 
-    case 'waiting':
-      view = <p>Waiting for Canvas to process data</p>;
+    case 'validationError':
+      view = (
+        <ValidationError
+          send={send}
+          errorData={state.context.validationError}
+        />
+      );
       break;
 
     case 'csvParseError':
