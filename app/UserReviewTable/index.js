@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Heading, Table } from '@instructure/ui';
+import { Button, Heading, Table, View } from '@instructure/ui';
 
 const UserReviewTable = ({ send, state }) => {
   const data = state.context.userSubmittedData;
@@ -26,30 +26,39 @@ const UserReviewTable = ({ send, state }) => {
   });
 
   return (
-    <>
-      <Heading level="h2">Review Data to Upload</Heading>
-      <Table caption="Review Uploaded Users" layout="auto" hover={true}>
+    <View>
+      <Heading level="h2">Review Data to Import</Heading>
+      <Table
+        caption="Review Uploaded Users"
+        layout="auto"
+        hover={true}
+        margin="medium none"
+      >
         <Table.Head>
           <Table.Row>{tableHeaderCols}</Table.Row>
         </Table.Head>
         <Table.Body>{tableBodyRows}</Table.Body>
       </Table>
-      <Button
-        onClick={() => {
-          send('RESET');
-        }}
-      >
-        Reset
-      </Button>
-      <Button
-        color="primary"
-        onClick={() => {
-          send('UPLOAD');
-        }}
-      >
-        Upload
-      </Button>
-    </>
+      <View display="block">
+        <Button
+          margin="small"
+          onClick={() => {
+            send('RESET');
+          }}
+        >
+          Reset
+        </Button>
+        <Button
+          margin="small"
+          color="primary"
+          onClick={() => {
+            send('UPLOAD');
+          }}
+        >
+          Upload
+        </Button>
+      </View>
+    </View>
   );
 };
 
