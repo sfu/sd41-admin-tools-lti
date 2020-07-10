@@ -17,6 +17,7 @@
         "email",
         "status"
       ],
+      "additionalProperties": false,
       "properties": {
         "user_id": {
           "type": "string",
