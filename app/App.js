@@ -6,6 +6,7 @@ import stateMachine from './stateMachines/userUploadForm';
 import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
 import CSVParseError from './CSVParseError';
+import UploadSuccess from './UploadSuccess';
 
 const App = () => {
   const [state, send] = useMachine(stateMachine, { devTools: true });
@@ -21,7 +22,13 @@ const App = () => {
       break;
 
     case 'uploading':
-      view = <p>Sending data to Canvas</p>;
+    case 'complete':
+      view = (
+        <UploadSuccess
+          importResult={state.context.sisImportStatusObject}
+          send={send}
+        />
+      );
       break;
 
     case 'waiting':
