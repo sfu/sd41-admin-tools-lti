@@ -7,6 +7,7 @@ import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';
 import ValidationError from './ValidationError';
 import CSVParseError from './CSVParseError';
+import WaitingForUpload from './WaitingForUpload';
 import UploadSuccess from './UploadSuccess';
 
 const App = () => {
@@ -23,6 +24,11 @@ const App = () => {
       break;
 
     case 'uploading':
+    case 'waiting':
+    case 'polling':
+      view = <WaitingForUpload />;
+      break;
+
     case 'complete':
       view = (
         <UploadSuccess
