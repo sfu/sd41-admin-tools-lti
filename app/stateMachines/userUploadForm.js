@@ -4,6 +4,8 @@ import checkSisImportProgress from '../lib/checkSisImportProgress';
 
 const initialContext = {
   error: null,
+  validationError: null,
+  csvParseError: null,
   userSubmittedData: null,
   sisImportObject: null,
   sisImportStatusObject: null,
@@ -23,9 +25,17 @@ export default Machine(
             target: 'reviewing',
             actions: ['SET_USER_SUBMITTED_DATA'],
           },
-          ERROR: {
-            target: 'error',
-            actions: ['SET_ERROR'],
+          CSV_PARSE_ERROR: {
+            target: 'csvParseError',
+            actions: assign({
+              csvParseError: (_, event) => event.csvParseError,
+            }),
+          },
+          VALIDATION_ERROR: {
+            target: 'validationError',
+            actions: assign({
+              validationError: (_, event) => event.validationError,
+            }),
           },
         },
       },
@@ -64,8 +74,6 @@ export default Machine(
                   'restored',
                 ];
                 const { workflow_state } = event.data;
-                console.log({ workflow_state });
-                console.log(event.data);
                 return SUCCESS_STATES.includes(workflow_state);
               },
               actions: assign({
@@ -92,6 +100,20 @@ export default Machine(
           RESET: 'ready',
         },
       },
+
+      // error states
+      csvParseError: {
+        on: {
+          RESET: 'ready',
+        },
+      },
+
+      validationError: {
+        on: {
+          RESET: 'ready',
+        },
+      },
+
       error: {
         on: {
           RESET: 'ready',
@@ -105,6 +127,10 @@ export default Machine(
         ...initialContext,
       })),
       SET_ERROR: assign((context, event) => ({
+        error: event.error,
+        userSubmittedData: null,
+      })),
+      SET_VALIDATION_ERROR: assign((context, event) => ({
         error: event.error,
         userSubmittedData: null,
       })),
