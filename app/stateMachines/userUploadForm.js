@@ -56,7 +56,19 @@ export default Machine(
             target: 'polling',
             actions: assign({ sisImportObject: (_, event) => event.data }),
           },
-          onError: 'error',
+          onError: [
+            {
+              target: 'validationError',
+              cond: (_, event) => event.data.error === 'VALIDATION_ERROR',
+              actions: assign({
+                validationError: (_, event) => event.data.errorDetail,
+              }),
+            },
+            {
+              target: 'serverError',
+              cond: (_, event) => event.data.error === 'SERVER_ERROR',
+            },
+          ],
         },
         on: { ERROR: 'error' },
       },
@@ -109,6 +121,12 @@ export default Machine(
       },
 
       validationError: {
+        on: {
+          RESET: 'ready',
+        },
+      },
+
+      serverError: {
         on: {
           RESET: 'ready',
         },

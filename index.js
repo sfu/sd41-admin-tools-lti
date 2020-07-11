@@ -85,7 +85,10 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
     const valid = validate(body);
 
     if (!valid) {
-      res.send(400, { errors: validate.errors, dataReceived: body });
+      res.send(400, {
+        error: 'VALIDATION_ERROR',
+        errorDetail: validate.errors,
+      });
       return;
     }
 
@@ -102,6 +105,7 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
         });
       });
 
+    // TODO: transform login_id
     const transformRecord = async (record) => {
       const password = await randomPassword();
       const status = record.hasOwnProperty('status') ? record.status : 'active';
@@ -140,7 +144,7 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
     res.send(result.data);
   } catch (error) {
     console.log(error);
-    res.send(500, { errors: [error.message] });
+    res.send(500, { error: 'SERVER_ERROR', data: error });
   }
 });
 
