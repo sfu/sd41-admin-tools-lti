@@ -67,13 +67,6 @@ const App = () => {
         </>
       );
       break;
-
-    default:
-      view = (
-        <p>
-          TODO: implement handler for <code>{state.value}</code>
-        </p>
-      );
   }
 
   return (
