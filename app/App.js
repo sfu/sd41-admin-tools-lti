@@ -9,6 +9,7 @@ import ValidationError from './ValidationError';
 import CSVParseError from './CSVParseError';
 import WaitingForUpload from './WaitingForUpload';
 import UploadSuccess from './UploadSuccess';
+import ServerError from './ServerError';
 
 const App = () => {
   const [state, send] = useMachine(stateMachine, { devTools: true });
@@ -52,6 +53,9 @@ const App = () => {
         <CSVParseError send={send} errorData={state.context.csvParseError} />
       );
       break;
+
+    case 'serverError':
+      view = <ServerError send={send} />;
 
     case 'error':
       view = (
