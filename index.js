@@ -10,6 +10,8 @@ const Bundler = require('parcel-bundler');
 const stringifyCsv = require('csv-stringify/lib/sync');
 const axios = require('axios');
 const Ajv = require('ajv');
+const Sentry = require('@sentry/node');
+
 const sisUserSchema = require('./sisUserSchema.json');
 
 const entry = path.resolve('./app/index.html');
@@ -22,9 +24,11 @@ const bundle = new Bundler(entry, {
   },
 });
 
+const { SESSION_SECRET, SENTRY_DSN } = process.env;
+
 // TODO: use redis for sessions
 const sessionConfig = {
-  secret: process.env.SESSION_SECRET,
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true },
@@ -34,6 +38,12 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const jsonParser = bodyParser.json();
 
 const app = express();
+
+if (SENTRY_DSN) {
+  Sentry.init({ dsn: SENTRY_DSN });
+  app.use(Sentry.Handlers.requestHandler());
+}
+
 app.use(session(sessionConfig));
 app.set('trust proxy', true);
 app.use(compression());
@@ -143,8 +153,7 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
     // return the sis import response to the app
     res.send(result.data);
   } catch (error) {
-    console.log(error);
-    res.send(500, { error: 'SERVER_ERROR', data: error });
+    res.send(500, { error: 'SERVER_ERROR', data: res.sentry });
   }
 });
 
@@ -172,11 +181,25 @@ app.get('/sisImportStatus/:id', async (req, res) => {
   }
 });
 
+app.get('/debug-sentry', function mainHandler(req, res) {
+  throw new Error('My first Sentry error!');
+});
+
 app.use(bundle.middleware());
 
 // TODO: check for session
 app.get('*', (req, res) => {
   res.sendFile(path.resolve('./dist/index.html'));
+});
+
+if (SENTRY_DSN) {
+  app.use(Sentry.Handlers.errorHandler());
+}
+
+app.use(function onError(err, req, res, next) {
+  // The error id is attached to `res.sentry` to be returned
+  // and optionally displayed to the user for support.
+  res.send(500, { error: 'SERVER_ERROR', data: res.sentry });
 });
 
 app.listen(3000, () => {
