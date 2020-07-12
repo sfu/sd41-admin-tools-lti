@@ -65,7 +65,6 @@ app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   try {
     await validateLtiLaunch(req, req.body);
   } catch (error) {
-    // TODO: Log to sentry
     req.session.loggedIn = false;
     req.session.errorCode = 'ERROR_INVALID_LAUNCH';
     res.redirect('/');
@@ -180,10 +179,6 @@ app.get('/sisImportStatus/:id', async (req, res) => {
     console.log(error);
     res.send(500, { errors: [error.message] });
   }
-});
-
-app.get('/debug-sentry', function mainHandler(req, res) {
-  throw new Error('My first Sentry error!');
 });
 
 app.use(bundle.middleware());
