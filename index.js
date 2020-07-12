@@ -15,17 +15,21 @@ const loggedIn = require('./lib/loggedIn');
 
 const sisUserSchema = require('./sisUserSchema.json');
 
-const entry = path.resolve('./app/index.html');
-const bundle = new Bundler(entry, {
-  hmr: true,
-  hmrPort: 8000,
-  https: {
-    cert: './.certs/sd41lti.lcs-dev.its.sfu.ca/cert.pem',
-    key: './.certs/sd41lti.lcs-dev.its.sfu.ca/key.pem',
-  },
-});
+const { NODE_ENV, SESSION_SECRET, SENTRY_DSN } = process.env;
 
-const { SESSION_SECRET, SENTRY_DSN } = process.env;
+const entry = path.resolve('./app/index.html');
+
+let bundle;
+if (NODE_ENV !== 'production') {
+  bundle = new Bundler(entry, {
+    hmr: true,
+    hmrPort: 8000,
+    https: {
+      cert: './.certs/sd41lti.lcs-dev.its.sfu.ca/cert.pem',
+      key: './.certs/sd41lti.lcs-dev.its.sfu.ca/key.pem',
+    },
+  });
+}
 
 const sessionConfig = {
   secret: SESSION_SECRET,
@@ -181,7 +185,9 @@ app.get('/sisImportStatus/:id', async (req, res) => {
   }
 });
 
-app.use(bundle.middleware());
+if (NODE_ENV !== 'production') {
+  app.use(bundle.middleware());
+}
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve('./dist/index.html'));
