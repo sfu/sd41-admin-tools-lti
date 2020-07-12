@@ -11,6 +11,7 @@ const stringifyCsv = require('csv-stringify/lib/sync');
 const axios = require('axios');
 const Ajv = require('ajv');
 const Sentry = require('@sentry/node');
+const loggedIn = require('./lib/loggedIn');
 
 const sisUserSchema = require('./sisUserSchema.json');
 
@@ -26,7 +27,6 @@ const bundle = new Bundler(entry, {
 
 const { SESSION_SECRET, SENTRY_DSN } = process.env;
 
-// TODO: use redis for sessions
 const sessionConfig = {
   secret: SESSION_SECRET,
   resave: false,
@@ -84,7 +84,9 @@ app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   res.redirect('/');
 });
 
-// TODO: check for session
+// all routes beyond this point require a session
+app.use(loggedIn);
+
 app.post('/userSisImport', jsonParser, async (req, res) => {
   try {
     const { body } = req;
@@ -157,7 +159,6 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
   }
 });
 
-// TODO: check for session
 app.get('/sisImportStatus/:id', async (req, res) => {
   const { id } = req.params;
   const {
@@ -187,7 +188,6 @@ app.get('/debug-sentry', function mainHandler(req, res) {
 
 app.use(bundle.middleware());
 
-// TODO: check for session
 app.get('*', (req, res) => {
   res.sendFile(path.resolve('./dist/index.html'));
 });
