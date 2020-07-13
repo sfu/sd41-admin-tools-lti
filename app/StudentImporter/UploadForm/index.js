@@ -11,7 +11,7 @@ import {
 } from '@instructure/ui';
 import csvParse from 'csv-parse/lib/sync';
 import Ajv from 'ajv';
-import schema from '../../sisUserSchema.json';
+import schema from '../../../sisUserSchema.json';
 
 const downloadTemplateCsv = (e) => {
   e.preventDefault();
@@ -28,6 +28,10 @@ const downloadTemplateCsv = (e) => {
 
 const UploadForm = ({ state, send }) => (
   <View>
+    <Heading level="h2" margin="medium 0">
+      Import Students to Canvas
+    </Heading>
+
     <Text>
       Import users into Canvas by creating a <code>users.csv</code> and
       uploading it using the form below. All fields in the file are required,
