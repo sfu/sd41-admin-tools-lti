@@ -39,6 +39,9 @@ export default Machine(
           },
         },
       },
+
+      // after file has been uploaded, parsed, and verified
+      // displays review table
       reviewing: {
         on: {
           UPLOAD: 'uploading',
@@ -48,6 +51,9 @@ export default Machine(
           },
         },
       },
+
+      // uploads JSON to our server, which parses, verifies, and transforms
+      // to CSV, and uploads to Canvas SIS import API
       uploading: {
         invoke: {
           id: 'invoke-postUserSisData',
@@ -72,6 +78,8 @@ export default Machine(
         },
         on: { ERROR: 'error' },
       },
+
+      // checks the status of the import
       polling: {
         invoke: {
           id: 'invoke-checkSisImportProgress',
@@ -104,9 +112,13 @@ export default Machine(
           onError: 'error',
         },
       },
+
+      // polls for updates if import not complete
       waiting: {
         after: { 1000: 'polling' },
       },
+
+      // we're done
       complete: {
         on: {
           RESET: 'ready',
