@@ -120,12 +120,12 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
         });
       });
 
-    // TODO: transform login_id
     const transformRecord = async (record) => {
       const password = await randomPassword();
       const status = record.hasOwnProperty('status') ? record.status : 'active';
       return {
         ...record,
+        user_id: `SD41:::${record.user_id}`,
         status,
         password,
       };
