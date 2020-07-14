@@ -1,5 +1,7 @@
 import React from 'react';
-import { Spinner, Text, View } from '@instructure/ui';
+import { Spinner } from '@instructure/ui-spinner';
+import { Text } from '@instructure/ui-text';
+import { View } from '@instructure/ui-view';
 
 const WaitingForUload = () => {
   return (

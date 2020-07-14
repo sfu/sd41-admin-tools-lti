@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMachine } from '@xstate/react';
-import { Button, View } from '@instructure/ui';
+import { Button } from '@instructure/ui-buttons';
+import { View } from '@instructure/ui-view';
 import stateMachine from './studentUploadMachine';
 import UploadForm from './UploadForm';
 import UserReviewTable from './UserReviewTable';

@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Button,
-  FileDrop,
-  Heading,
-  IconDownloadLine,
-  IconUploadLine,
-  Text,
-  View,
-} from '@instructure/ui';
+import { Button } from '@instructure/ui-buttons';
+import { FileDrop } from '@instructure/ui-file-drop';
+import { Heading } from '@instructure/ui-heading';
+import { IconDownloadLine, IconUploadLine } from '@instructure/ui-icons';
+import { Text } from '@instructure/ui-text';
+import { View } from '@instructure/ui-view';
 import csvParse from 'csv-parse/lib/sync';
 import Ajv from 'ajv';
 import schema from '../../../sisUserSchema.json';

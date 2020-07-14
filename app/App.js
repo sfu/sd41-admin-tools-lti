@@ -1,5 +1,6 @@
 import React from 'react';
-import { Heading, View } from '@instructure/ui';
+import { Heading } from '@instructure/ui-heading';
+import { View } from '@instructure/ui-view';
 import StudentImporter from './StudentImporter';
 import '@instructure/canvas-theme';
 

@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button, ToggleDetails, View } from '@instructure/ui';
+import { Alert } from '@instructure/ui-alerts';
+import { Button } from '@instructure/ui-buttons';
+import { ToggleDetails } from '@instructure/ui-toggle-details';
+import { View } from '@instructure/ui-view';
 
 const ValidationError = ({ errorData, send }) => {
   return (

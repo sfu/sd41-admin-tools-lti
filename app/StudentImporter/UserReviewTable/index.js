@@ -1,6 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Heading, Table, View } from '@instructure/ui';
+
+import { Button } from '@instructure/ui-buttons';
+import { Heading } from '@instructure/ui-heading';
+import { Table } from '@instructure/ui-table';
+import { View } from '@instructure/ui-view';
 
 const UserReviewTable = ({ send, state }) => {
   const data = state.context.userSubmittedData;

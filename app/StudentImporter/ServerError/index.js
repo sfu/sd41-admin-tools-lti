@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button, View } from '@instructure/ui';
+import { Alert } from '@instructure/ui-alerts';
+import { Button } from '@instructure/ui-buttons';
+import { View } from '@instructure/ui-view';
 
 const ServerErrror = ({ send }) => {
   return (
