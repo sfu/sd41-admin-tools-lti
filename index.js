@@ -51,7 +51,9 @@ if (SENTRY_DSN) {
 app.use(session(sessionConfig));
 app.set('trust proxy', true);
 app.use(compression());
-
+if (NODE_ENV === 'production') {
+  app.use('/dist', express.static('dist'));
+}
 app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   const {
     LTI_CLIENT_ID,
