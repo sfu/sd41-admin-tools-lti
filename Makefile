@@ -4,8 +4,8 @@ IMG    := ${NAME}\:${TAG}
 LATEST := ${NAME}\:latest
 
 build:
-	rm -rf .cache dist/*
-	@docker build -t ${IMG} .
+	rm -rf dist/*
+	@docker build -f Dockerfile.production -t ${IMG} .
 	@docker tag ${IMG} ${LATEST}
 
 push:
