@@ -15,7 +15,6 @@ const postUserSisData = async (context, event) => {
     });
 
     const json = await response.json();
-    console.log({ json });
     if (!response.ok) {
       throw json;
     } else {
