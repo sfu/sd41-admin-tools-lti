@@ -10,6 +10,7 @@
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
+    "@instructure/ui-babel-preset": "^7.1.1",
     "@instructure/ui-scripts": "^7.1.1",
     "@instructure/ui-webpack-config": "^7.1.1",
     "babel-loader": "^8.1.0",
