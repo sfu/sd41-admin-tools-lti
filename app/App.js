@@ -1,8 +1,8 @@
 import React from 'react';
+import '@instructure/canvas-theme';
 import { Heading } from '@instructure/ui-heading';
 import { View } from '@instructure/ui-view';
 import StudentImporter from './StudentImporter';
-import '@instructure/canvas-theme';
 
 const App = () => {
   return (
