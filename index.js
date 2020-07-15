@@ -71,9 +71,11 @@ app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   try {
     await validateLtiLaunch(req, req.body);
   } catch (error) {
+    console.log(error);
     req.session.loggedIn = false;
     req.session.errorCode = 'ERROR_INVALID_LAUNCH';
     res.redirect('/');
+    return;
   }
 
   // next, check if we're in the right subaccount ahd have the right privs
@@ -102,7 +104,7 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
     const valid = validate(body);
 
     if (!valid) {
-      res.send(400, {
+      res.status(400).send({
         error: 'VALIDATION_ERROR',
         errorDetail: validate.errors,
       });
@@ -202,7 +204,8 @@ if (SENTRY_DSN) {
 app.use(function onError(err, req, res, next) {
   // The error id is attached to `res.sentry` to be returned
   // and optionally displayed to the user for support.
-  res.send(500, { error: 'SERVER_ERROR', data: res.sentry });
+  console.log(err);
+  res.status(500).send({ error: 'SERVER_ERROR', data: res.sentry });
 });
 
 app.listen(3000, () => {
