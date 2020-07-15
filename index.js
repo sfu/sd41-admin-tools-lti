@@ -11,6 +11,7 @@ const stringifyCsv = require('csv-stringify/lib/sync');
 const axios = require('axios');
 const Ajv = require('ajv');
 const Sentry = require('@sentry/node');
+const morgan = require('morgan');
 const loggedIn = require('./lib/loggedIn');
 
 const sisUserSchema = require('./sisUserSchema.json');
@@ -48,6 +49,7 @@ if (SENTRY_DSN) {
   app.use(Sentry.Handlers.requestHandler());
 }
 
+app.use(morgan('combined'));
 app.use(session(sessionConfig));
 app.set('trust proxy', true);
 app.use(compression());
