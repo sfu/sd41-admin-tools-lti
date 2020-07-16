@@ -17,18 +17,31 @@ const loggedIn = require('./lib/loggedIn');
 
 const sisUserSchema = require('./sisUserSchema.json');
 
-const { NODE_ENV, SESSION_SECRET, SENTRY_DSN } = process.env;
+const {
+  NODE_ENV,
+  SESSION_SECRET,
+  SENTRY_DSN,
+  VIRTUAL_PORT = 3000,
+} = process.env;
 
 const entry = path.resolve('./app/index.html');
 
+// in development use the parcel bundler
+// in order for HMR to work, the websocket connection
+// needs to be TLS, so we need to provide the same
+// certificates as being used on the vhost
 let bundle;
 if (NODE_ENV !== 'production') {
+  const { HMR_PORT = 8000, HMR_CERT, HMR_KEY } = process.env;
+  if (!HMR_CERT || !HMR_KEY) {
+    throw new Error('HMR_CERT or HMR_KEY not provided; see README');
+  }
   bundle = new Bundler(entry, {
     hmr: true,
-    hmrPort: 8000,
+    hmrPort: HMR_PORT,
     https: {
-      cert: './.certs/sd41lti.lcs-dev.its.sfu.ca/cert.pem',
-      key: './.certs/sd41lti.lcs-dev.its.sfu.ca/key.pem',
+      cert: HMR_CERT,
+      key: HMR_KEY,
     },
   });
 }
@@ -60,6 +73,7 @@ app.use(compression());
 if (NODE_ENV === 'production') {
   app.use('/dist', express.static('dist'));
 }
+
 app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   const {
     LTI_CLIENT_ID,
@@ -97,7 +111,6 @@ app.post('/ltiLaunch', urlencodedParser, async (req, res) => {
   res.redirect('/');
 });
 
-// all routes beyond this point require a session
 app.use(loggedIn);
 
 app.post('/userSisImport', jsonParser, async (req, res) => {
@@ -198,7 +211,6 @@ app.get('/sisImportStatus/:id', async (req, res) => {
 if (NODE_ENV !== 'production') {
   app.use(bundle.middleware());
 }
-
 app.get('*', (req, res) => {
   res.sendFile(path.resolve('./dist/index.html'));
 });
@@ -214,6 +226,6 @@ app.use(function onError(err, req, res, next) {
   res.status(500).send({ error: 'SERVER_ERROR', data: res.sentry });
 });
 
-app.listen(3000, () => {
-  console.log('ready');
+app.listen(VIRTUAL_PORT, () => {
+  console.log(`Server ready and listening: http://0.0.0.0:${VIRTUAL_PORT}`);
 });
