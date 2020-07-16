@@ -48,6 +48,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "ims-lti": "git+https://github.com/sfu/ims-lti.git#1cfa6c9",
+    "memorystore": "^1.6.2",
     "morgan": "^1.10.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
