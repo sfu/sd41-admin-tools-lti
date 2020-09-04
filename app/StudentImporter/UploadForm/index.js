@@ -53,7 +53,6 @@ const UploadForm = ({ state, send }) => (
     </Button>
     <FileDrop
       margin="small none"
-      accept="text/csv"
       onDropAccepted={async ([file]) => {
         const ajv = new Ajv({
           verbose: false,
