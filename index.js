@@ -7,7 +7,6 @@ const MemoryStore = require('memorystore')(session);
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const { Provider } = require('ims-lti');
-const Bundler = require('parcel-bundler');
 const stringifyCsv = require('csv-stringify/lib/sync');
 const axios = require('axios');
 const Ajv = require('ajv');
@@ -36,6 +35,7 @@ if (NODE_ENV !== 'production') {
   if (!HMR_CERT || !HMR_KEY) {
     throw new Error('HMR_CERT or HMR_KEY not provided; see README');
   }
+  const Bundler = require('parcel-bundler');
   bundle = new Bundler(entry, {
     hmr: true,
     hmrPort: HMR_PORT,
