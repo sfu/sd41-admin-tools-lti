@@ -1,12 +1,23 @@
-FROM node:14-alpine
-
-WORKDIR /usr/src/app
-
+# ---- BUILD ----
+FROM node:14-alpine AS BUILD_IMAGE
 RUN apk update && \
-    apk add --no-cache git util-linux 
-COPY package*.json ./
-RUN yarn || yarn --network-concurrency 1
+    apk add --no-cache --virtual .build-deps git util-linux jq && \
+    rm -rf /var/cache/apk/*
+WORKDIR /usr/src/app
+COPY package*.json yarn.lock ./
+RUN yarn --frozen-lockfile --network-concurrency 1
 COPY . .
+RUN yarn build && rm -rf node_modules
+
+# ---- RELEASE -----
+FROM node:14-alpine
+RUN apk update && \
+    apk add --no-cache --virtual .build-deps git util-linux jq && \
+    rm -rf /var/cache/apk/*
+WORKDIR /usr/src/app
+COPY --from=BUILD_IMAGE /usr/src/app .
+RUN yarn --network-concurrency 1 --prod && rm -rf $(yarn cache dir) && apk del .build-deps
 EXPOSE 3000
-RUN yarn build
 CMD ["yarn", "start"]
+
+
