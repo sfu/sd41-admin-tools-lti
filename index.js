@@ -151,6 +151,7 @@ app.post('/userSisImport', jsonParser, async (req, res) => {
         user_id: `SD41:::${record.user_id}`,
         status,
         password,
+        authentication_provider_id: 5,
       };
     };
 
